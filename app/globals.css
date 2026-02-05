@@ -1,0 +1,46 @@
+/* =========================
+   HEADER NAV – HOVER EFFECT
+   (icon + text + facebook)
+   ========================= */
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  transition: transform 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.navLink:hover {
+  background: rgba(16, 185, 129, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.18);
+}
+
+/* Icon animation (emoji + svg) */
+.navLink span,
+.navLink svg {
+  transition: transform 180ms ease;
+}
+
+.navLink:hover span,
+.navLink:hover svg {
+  transform: scale(1.15);
+}
+
+/* Facebook icon specific hover tint */
+.socialNav:hover {
+  background: rgba(24, 119, 242, 0.12);
+}
+
+/* Footer hover (optional nice effect) */
+.footerSocial:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(24, 119, 242, 0.18);
+}
+a[aria-label="Facebook"]:hover,
+a[aria-label="WhatsApp"]:hover {
+  transform: translateY(-2px);
+  transition: transform 180ms ease;
+}

@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Store {
+  id        String   @id @default(cuid())
+  name      String
+  ownerName String?
+  phone     String?
+  email     String?
+  address   String?
+  city      String?
+  notes     String?
+
+  // ✅ back relations
+  users     User[]
+  invoices  Invoice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Invoice {
+  id           String        @id @default(uuid())
+  storeId      String
+  invoiceNo    String        @unique
+  status       InvoiceStatus @default(DRAFT)
+
+  issueDate    DateTime
+  dueDate      DateTime?
+  currency     String        @default("CAD")
+
+  // ✅ cents (Int)
+  subtotal     Int
+  taxRate      Int           @default(13)
+  taxAmount    Int
+  total        Int
+
+  notes        String?
+  pdfPath      String?
+  pdfUrl       String?
+
+  createdById  String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  // relations
+  createdBy    User          @relation("InvoiceCreatedBy", fields: [createdById], references: [id])
+  store        Store         @relation(fields: [storeId], references: [id])
+  invoiceItems InvoiceItem[]
+
+  @@index([storeId, issueDate])
+}
+
+model InvoiceItem {
+  id        String  @id @default(cuid())
+  invoiceId String
+  name      String
+  qty       Int
+  unitPrice Int
+  lineTotal Int
+
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+
+  @@index([invoiceId])
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String   @unique
+  password  String?
+  role      Role     @default(STORE)
+
+  storeId   String?
+  store     Store?   @relation(fields: [storeId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  // ✅ back relation name matches Invoice.createdBy relation
+  invoicesCreated Invoice[] @relation("InvoiceCreatedBy")
+}
+
+enum Role {
+  ADMIN
+  STORE
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+}
